@@ -134,7 +134,14 @@ def speculative_decode(
                 committed.append(int(bonus))
             tokens.extend(committed[:remaining])
             if len(tokens) - len(prefix) < max_new_tokens:
-                current_hidden = hidden[0, base_length + len(committed) - 1]
+                if rejected:
+                    current_hidden = hidden[0, base_length + len(committed) - 1]
+                else:
+                    _, current_hidden = target.forward_with_hidden(
+                        torch.tensor([tokens], dtype=torch.long, device=device)
+                    )
+                    target_calls += 1
+                    current_hidden = current_hidden[0, -1]
     elapsed = time.perf_counter() - started
     generated = len(tokens) - len(prefix)
     return DecodeResult(
