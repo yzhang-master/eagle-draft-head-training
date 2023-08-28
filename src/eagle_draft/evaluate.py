@@ -28,8 +28,9 @@ def aggregate_metrics(results: list[DecodeResult]) -> dict[str, float | int]:
     generated = sum(result.generated_tokens for result in results)
     accepted = sum(result.accepted_draft_tokens for result in results)
     verifications = sum(result.verification_passes for result in results)
+    target_calls = sum(result.target_calls for result in results)
     elapsed = sum(result.elapsed_seconds for result in results)
-    acceptance_length = generated / verifications if verifications else float(generated)
+    acceptance_length = generated / (verifications or target_calls)
     return {
         "generated_tokens": generated,
         "accepted_draft_tokens": accepted,
