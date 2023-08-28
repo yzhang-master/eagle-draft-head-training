@@ -21,7 +21,7 @@ class DecodeResult:
     @property
     def acceptance_length(self) -> float:
         if self.verification_passes == 0:
-            return float(self.generated_tokens)
+            return self.generated_tokens / self.target_calls
         return self.generated_tokens / self.verification_passes
 
     @property
